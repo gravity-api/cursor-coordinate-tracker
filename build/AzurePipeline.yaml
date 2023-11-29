@@ -1,136 +1,33 @@
-name: CursorCoordinateTracker.$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
 
 trigger:
-  branches:
-    include:
-    - master
+- main
 
 pool:
-  vmImage: windows-latest
+  vmImage: 'windows-latest'
 
-stages:
-  - stage: 'Build'
-    jobs:
-    - job: 'BuildAndPack'
-      displayName: 'Build & Pack Rhino API Agent'
-      steps:
-      - task: UseDotNet@2
-        displayName: "Install .NET Core SDK"
-        inputs:
-          version: 8.x
-          performMultiLevelLookup: true
-          includePreviewVersions: false
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
 
-      - task: DotNetCoreCLI@2
-        displayName: Restore Dependencies
-        inputs:
-          command: 'restore'
-          projects: '**/*.csproj'
-          verbosityRestore: 'Diagnostic'
-      - task: MSBuild@1
-        inputs:
-          solution: '**/*.sln'
-          msbuildArchitecture: 'x64'
-          configuration: 'Release'
-          msbuildArguments: '/p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true'
-          clean: true
-          restoreNugetPackages: true
+steps:
+- task: NuGetToolInstaller@1
 
-      - task: DotNetCoreCLI@2
-        displayName: Publish Files to $(build.artifactstagingdirectory)/$(Build.BuildNumber)
-        inputs:
-          command: 'publish'
-          publishWebProjects: false
-          projects: '**/Rhino.Agent/Rhino.Agent.csproj'
-          arguments: "--configuration ${{ parameters.BuildConfiguration }} --output $(build.artifactstagingdirectory)/$(Build.BuildNumber)"
-          modifyOutputPath: false
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
 
-      - task: PowerShell@2
-        displayName: 'Parse Build Version'
-        inputs:
-          targetType: 'inline'
-          pwsh: true
-          script: |
-            # setup
-            [regex]$pattern = '(\d+.?)+'
-            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
-            # set value
-            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
 
-      - task: PowerShell@2
-        displayName: 'Set Version File'
-        inputs:
-          targetType: 'inline'
-          pwsh: true
-          script: |
-            Set-Content -Path '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' -Value '$(buildVersion)'
-            Compress-Archive -update '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/version.txt' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
-            Compress-Archive -update '$(Build.Repository.LocalPath)/docs/postman/RhinoApiReferenceGuidev3.Postman.json' '$(build.artifactstagingdirectory)/$(Build.BuildNumber)/Rhino.Agent.$(buildVersion).zip'
-            # setup
-            [regex]$pattern = '(\d+.?)+'
-            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
-            # set value
-            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
-
-      - task: PublishBuildArtifacts@1
-        displayName: Publish Artifact to Container
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: 'drop'
-          publishLocation: 'Container'
-
-  - stage: PublishGit
-    displayName: Publish on GitHub
-    dependsOn: 'Build'
-    condition: succeeded()
-    jobs:
-    - job: 'CraeteRelease'
-      displayName: 'Create a GitHub Release & Tag'
-      steps:
-      - checkout: none
-
-      - task: PowerShell@2
-        displayName: 'Parse Build Version'
-        inputs:
-          targetType: 'inline'
-          pwsh: true
-          script: |
-            # setup
-            [regex]$pattern = '(\d+.?)+'
-            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
-            # set value
-            Write-Host "##vso[task.setvariable variable=buildVersion]$version"
-
-      - task: DownloadBuildArtifacts@1
-        displayName: 'Get Rhino API Agent Artifact'
-        inputs:
-          buildType: 'current'
-          downloadType: 'single'
-          artifactName: 'drop'
-          downloadPath: '$(System.ArtifactsDirectory)'
-
-      - task: PowerShell@2
-        displayName: 'Set Asset Name'
-        inputs:
-          targetType: 'inline'
-          pwsh: true
-          errorActionPreference: 'silentlyContinue'
-          script: |
-            $artifact     = Get-ChildItem $(build.artifactstagingdirectory)/*.zip -Recurse
-            $artifactName = $item.FullName -replace '.zip', '-$(Release.Prefix).zip'
-            Rename-Item -Path $item.FullName -NewName $name
-
-      - task: GitHubRelease@1
-        displayName: 'Create GitHub Tag'
-        inputs:
-          gitHubConnection: 'github.com'
-          repositoryName: '$(Build.Repository.Name)'
-          action: 'create'
-          target: '$(Build.SourceVersion)'
-          tagSource: 'userSpecifiedTag'
-          isPreRelease: false
-          tag: 'v$(buildVersion)-$(Release.Prefix)'
-          title: '$(Release.Prefix) v$(buildVersion)'
-          changeLogCompareToRelease: 'lastFullRelease'
-          changeLogType: 'commitBased'
-          assets: '$(build.artifactstagingdirectory)/**/*.zip'
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
