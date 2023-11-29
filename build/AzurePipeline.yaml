@@ -30,7 +30,7 @@ stages:
         displayName: 'Build Solution'
         inputs:
           solution: '$(solution)'
-          msbuildArgs: '/target:publish /T:UiaWebDriverServer /p:Configuration=Release /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
+          msbuildArgs: '/target:publish /p:Configuration=Release /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
           platform: '$(buildPlatform)'
           configuration: '$(buildConfiguration)'
           clean: true
