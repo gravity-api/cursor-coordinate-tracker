@@ -35,9 +35,7 @@ To use the application, simply run the executable file. The main window displays
 
 ## Screenshots
 
-![Application Screenshot](/screenshots/1.png)  
-
-![Application Screenshot](/screenshots/2.png)
+![Application Screenshot](/screenshots/1.png)
 
 ## Contributing
 
