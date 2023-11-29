@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>true</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<UseWPF>true</UseWPF>
+		<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Mouse.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Mouse.png" />
+	</ItemGroup>
+
+</Project>
