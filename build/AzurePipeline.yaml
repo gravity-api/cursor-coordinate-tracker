@@ -65,14 +65,20 @@ stages:
           script: |
             # setup
             [regex]$pattern = '(\d+.?)+'
-            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}      
+            $version        = $pattern.Matches('$(Build.BuildNumber)') | foreach-object {$_.Value}
             # set value
             Write-Host "##vso[task.setvariable variable=buildVersion]$version"
+
+      - task: DownloadBuildArtifacts@1
+        inputs:
+          buildType: 'current'
+          downloadType: 'specific'
+          downloadPath: '$(System.ArtifactsDirectory)'
+          cleanDestinationFolder: true
 
       - task: GitHubRelease@1
         displayName: 'Create GitHub Tag'
         inputs:
-          assets: $(Build.ArtifactStagingDirectory)/drop/*
           gitHubConnection: 'github.com'
           repositoryName: '$(Build.Repository.Name)'
           action: 'create'
