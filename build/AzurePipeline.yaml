@@ -28,7 +28,7 @@ stages:
       - task: VSBuild@1
         inputs:
           solution: '$(solution)'
-          msbuildArgs: '$(Build.SourcesDirectory)\src\CursorCoordinateTracker.csproj /p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true'
+          msbuildArgs: '/p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true'
           platform: '$(buildPlatform)'
           configuration: '$(buildConfiguration)'
           clean: true
