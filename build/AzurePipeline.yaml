@@ -26,14 +26,18 @@ stages:
         inputs:
           restoreSolution: '$(solution)'
 
-      - task: VSBuild@1
-        displayName: 'Build Solution'
+      - task: CmdLine@2
         inputs:
-          #solution: '$(uiaProject)'
-          msbuildArgs: '$(uiaProject) /target:publish /p:Configuration=Release /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
-          platform: '$(buildPlatform)'
-          configuration: '$(buildConfiguration)'
-          clean: true
+          script: 'msbuild $(uiaProject) /target:publish /p:Configuration=Release /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
+
+      # - task: VSBuild@1
+      #   displayName: 'Build Solution'
+      #   inputs:
+      #     #solution: '$(uiaProject)'
+      #     msbuildArgs: '$(uiaProject) /target:publish /p:Configuration=Release /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
+      #     platform: '$(buildPlatform)'
+      #     configuration: '$(buildConfiguration)'
+      #     clean: true
 
       - task: ArchiveFiles@2
         displayName: 'Create Build Artifact'
