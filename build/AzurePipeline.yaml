@@ -8,7 +8,7 @@ pool:
 
 variables:
   solution: '**/*.sln'
-  buildPlatform: 'x64'
+  buildPlatform: 'any cpu'
   buildConfiguration: 'Release'
 
 stages:
@@ -39,7 +39,7 @@ stages:
         inputs:
           rootFolderOrFile: '$(Build.BinariesDirectory)/*.*'
           archiveType: 'zip'
-          archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-win-$(buildPlatform).zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-win-x64.zip'
           replaceExistingArchive: true
 
       - task: PublishBuildArtifacts@1
