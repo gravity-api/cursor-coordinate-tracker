@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace CursorCoordinateTracker
 {
@@ -12,26 +13,15 @@ namespace CursorCoordinateTracker
     /// </summary>
     public partial class MainWindow : Window
     {
-        /// <summary>
-        /// Imports the GetPhysicalCursorPos function from the user32.dll library.
-        /// </summary>
-        /// <param name="lpPoint">A pointer to a <see cref="TagPoint"/> structure that receives the screen coordinates of the cursor.</param>
-        /// <returns>
-        /// If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
-        /// To get extended error information, call <see cref="Marshal.GetLastWin32Error"/>.
-        /// </returns>
+        // Imports the GetPhysicalCursorPos function from the user32.dll library.
+        // If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+        // To get extended error information, call Marshal.GetLastWin32Error.
         [LibraryImport("user32.dll")]
         private static partial IntPtr GetPhysicalCursorPos(out TagPoint lpPoint);
 
-        /// <summary>
-        /// Imports the SetPhysicalCursorPos function from the user32.dll library.
-        /// </summary>
-        /// <param name="x">The new x-coordinate of the cursor, in screen coordinates.</param>
-        /// <param name="y">The new y-coordinate of the cursor, in screen coordinates.</param>
-        /// <returns>
-        /// If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
-        /// To get extended error information, call <see cref="Marshal.GetLastWin32Error"/>.
-        /// </returns>
+        // Imports the SetPhysicalCursorPos function from the user32.dll library.
+        // If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+        // To get extended error information, call Marshal.GetLastWin32Error.
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool SetPhysicalCursorPos(int x, int y);
@@ -48,18 +38,35 @@ namespace CursorCoordinateTracker
             InitializeComponent();
         }
 
+        #region *** Start/Stop   ***
         /// <summary>
-        /// Handles the click event for the Start/Stop button.
+        /// Handles the Click event for the Start/Stop button.
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="e">The event arguments.</param>
         private void BtnStartStop_Click(object sender, RoutedEventArgs e)
         {
+            StartStop((Button)sender);
+        }
+
+        /// <summary>
+        /// Handles the AccessKeyPressed event for the Start/Stop button.
+        /// </summary>
+        /// <param name="sender">The object that triggered the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void BtnStartStop_AccessKeyPressed(object sender, AccessKeyPressedEventArgs e)
+        {
+            StartStop((Button)sender);
+        }
+
+        // Handles the click event for the Start/Stop button.
+        private void StartStop(Button startStopButton)
+        {
             // Toggle the running state
             _isRunning = !_isRunning;
 
             // Update the label on the button
-            SetLabel((Button)sender);
+            SetLabel(startStopButton);
 
             // Start a new task to continuously update the cursor position
             Task.Run(() =>
@@ -82,25 +89,61 @@ namespace CursorCoordinateTracker
             });
         }
 
+        // Sets the label for a button based on the current state.
+        private void SetLabel(Button button)
+        {
+            // If running, set the button label to indicate stopping
+            if (_isRunning)
+            {
+
+                button.Content = "⬛ _Stop";
+            }
+            // If not running, set the button label to indicate starting
+            else
+            {
+                button.Content = "▶ _Start";
+            }
+        }
+        #endregion
+
+        #region *** Set Position ***
         /// <summary>
-        /// Handles the click event for the Set Position button.
+        /// Handles the Click event for the Set Position button.
         /// </summary>
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="e">The event arguments.</param>
         private void BtnSetPosition_Click(object sender, RoutedEventArgs e)
+        {
+            SetPosition();
+        }
+
+        /// <summary>
+        /// Handles the AccessKeyPressed event for the Set Position button.
+        /// </summary>
+        /// <param name="sender">The object that triggered the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void BtnSetPosition_AccessKeyPressed(object sender, AccessKeyPressedEventArgs e)
+        {
+            SetPosition();
+        }
+
+        // Handles the AccessKeyPressed event for the Set Position button.
+        private void SetPosition()
         {
             // Use Dispatcher to update UI components
             Dispatcher.BeginInvoke(() =>
             {
                 // Parse values from text boxes
                 _ = int.TryParse(TxbAxisX.Text, out int x);
-                _ = int.TryParse(TxbAxisX.Text, out int y);
+                _ = int.TryParse(TxbAxisY.Text, out int y);
 
                 // Set the physical cursor position
                 SetPhysicalCursorPos(x, y);
             });
         }
+        #endregion
 
+        #region *** Set Speed    ***
         /// <summary>
         /// Handles the ValueChanged event of the SldRefreshSpeed slider, updating the refresh speed.
         /// </summary>
@@ -111,22 +154,7 @@ namespace CursorCoordinateTracker
             // Update the refresh speed based on the slider value
             _refreshSpeed = ((Slider)sender).Value;
         }
-
-        // Sets the label for a button based on the current state.
-        private void SetLabel(Button button)
-        {
-            // If running, set the button label to indicate stopping
-            if (_isRunning)
-            {
-                
-                button.Content = "⬛ _Stop";
-            }
-            // If not running, set the button label to indicate starting
-            else
-            {
-                button.Content = "▶ _Start";
-            }
-        }
+        #endregion
 
         // Represents a point with integer X and Y coordinates.
         [StructLayout(LayoutKind.Sequential, Pack = 4)]

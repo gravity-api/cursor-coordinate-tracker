@@ -52,6 +52,7 @@
                 Width="70"
                 Name="BtnStartStop"
                 Click="BtnStartStop_Click"
+                AccessKeyManager.AccessKeyPressed="BtnStartStop_AccessKeyPressed"
                 Cursor="Hand"/>
 
         <Button Content="Set _Position"
@@ -61,7 +62,9 @@
                 Height="30"
                 Width="70"
                 Name="BtnSetPosition"
-                Cursor="Hand" Click="BtnSetPosition_Click"/>
+                Click="BtnSetPosition_Click"
+                AccessKeyManager.AccessKeyPressed="BtnSetPosition_AccessKeyPressed"
+                Cursor="Hand"/>
 
         <Image HorizontalAlignment="Left"
                Height="100"
