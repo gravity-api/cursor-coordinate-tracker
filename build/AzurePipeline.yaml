@@ -37,7 +37,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: 'Create Build Artifact'
         inputs:
-          rootFolderOrFile: '$(Build.BinariesDirectory)/'
+          rootFolderOrFile: '$(Build.BinariesDirectory)/*.*'
           archiveType: 'zip'
           archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-win-x64.zip'
           replaceExistingArchive: true
