@@ -36,7 +36,7 @@ stages:
 
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: '$(Build.BinariesDirectory)/b'
+          rootFolderOrFile: '$(Build.BinariesDirectory)/*.*'
           archiveType: 'zip'
           archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-win-x64.zip'
           replaceExistingArchive: true
