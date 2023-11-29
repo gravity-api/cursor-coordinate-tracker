@@ -72,6 +72,7 @@ stages:
       - task: GitHubRelease@1
         displayName: 'Create GitHub Tag'
         inputs:
+          assets: $(Build.ArtifactStagingDirectory)/*
           gitHubConnection: 'github.com'
           repositoryName: '$(Build.Repository.Name)'
           action: 'create'
