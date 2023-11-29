@@ -21,14 +21,32 @@ stages:
       displayName: 'Build, Pack & Publish'
       steps:
       - task: NuGetToolInstaller@1
+        displayName: 'Install NuGet Tools'
 
       - task: NuGetCommand@2
+        displayName: 'Restore Packages'
         inputs:
           restoreSolution: '$(solution)'
+
       - task: VSBuild@1
+        displayName: 'Build Solution'
         inputs:
           solution: '$(solution)'
-          msbuildArgs: '/p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true'
+          msbuildArgs: '/p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
           platform: '$(buildPlatform)'
           configuration: '$(buildConfiguration)'
           clean: true
+
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: '$(Build.BinariesDirectory)'
+          includeRootFolder: true
+          archiveType: 'zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+          replaceExistingArchive: true
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
