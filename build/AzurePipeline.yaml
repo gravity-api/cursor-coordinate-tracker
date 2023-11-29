@@ -29,8 +29,8 @@ stages:
       - task: VSBuild@1
         displayName: 'Build Solution'
         inputs:
-          solution: '$(uiaProject)'
-          msbuildArgs: '/target:publish /p:Configuration=Release /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
+          #solution: '$(uiaProject)'
+          msbuildArgs: '$(uiaProject) /target:publish /p:Configuration=Release /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
           platform: '$(buildPlatform)'
           configuration: '$(buildConfiguration)'
           clean: true
