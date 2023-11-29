@@ -8,6 +8,7 @@ pool:
 
 variables:
   solution: '**/*.sln'
+  uiaProject: '**/UiaWebDriverServer.csproj'
   buildPlatform: 'any cpu'
   buildConfiguration: 'Release'
 
@@ -28,7 +29,7 @@ stages:
       - task: VSBuild@1
         displayName: 'Build Solution'
         inputs:
-          solution: '$(solution)'
+          solution: '$(uiaProject)'
           msbuildArgs: '/target:publish /p:Configuration=Release /p:DeployOnBuild=true /p:PublishDir=$(Build.BinariesDirectory)'
           platform: '$(buildPlatform)'
           configuration: '$(buildConfiguration)'
