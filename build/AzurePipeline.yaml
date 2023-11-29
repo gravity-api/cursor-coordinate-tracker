@@ -37,7 +37,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: 'Create Build Artifact'
         inputs:
-          rootFolderOrFile: '$(Build.BinariesDirectory)/*.*'
+          rootFolderOrFile: '$(Build.BinariesDirectory)/**'
           archiveType: 'zip'
           archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-win-x64.zip'
           replaceExistingArchive: true
@@ -79,6 +79,7 @@ stages:
       - task: GitHubRelease@1
         displayName: 'Create GitHub Tag'
         inputs:
+          assets: $(Build.ArtifactStagingDirectory)/drop/*
           gitHubConnection: 'github.com'
           repositoryName: '$(Build.Repository.Name)'
           action: 'create'
