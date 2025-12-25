@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34322.80
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CursorCoordinateTracker", "CursorCoordinateTracker\CursorCoordinateTracker.csproj", "{FDA2674F-8AB7-49AB-9693-E8DA2E24F1A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{294CD280-BA5D-42A7-910D-6C96433417D1}"
 	ProjectSection(SolutionItems) = preProject
-		..\build\AzurePipeline.yaml = ..\build\AzurePipeline.yaml
+		..\.github\workflows\release-pipeline.yaml = ..\.github\workflows\release-pipeline.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{61640856-75DF-45B6-9D0D-0EA8ACFC947E}"

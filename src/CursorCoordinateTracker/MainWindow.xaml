@@ -66,22 +66,21 @@
                 AccessKeyManager.AccessKeyPressed="BtnSetPosition_AccessKeyPressed"
                 Cursor="Hand"/>
 
-        <Image HorizontalAlignment="Left"
-               Height="100"
-               Margin="211,52,0,0"
-               VerticalAlignment="Top"
-               Width="100"
-               Source="/Mouse.png"
-               RenderTransformOrigin="0.5,0.5">
-            <Image.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="35"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Image.RenderTransform>
-        </Image>
+
+        <Viewbox HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 Width="100"
+                 Height="100"
+                 Margin="211,52,0,0"
+                 Stretch="Fill"
+                 RenderTransformOrigin="0.5,0.5">
+
+            <Canvas Width="640" Height="640">
+                <Path Fill="Black"
+                      Data="M173.3 66.5C181.4 62.4 191.2 63.3 198.4 68.8L518.4 308.7C526.7 314.9 530 325.7 526.8 335.5C523.6 345.3 514.4 351.9 504 351.9L351.7 351.9L440.6 529.6C448.5 545.4 442.1 564.6 426.3 572.5C410.5 580.4 391.3 574 383.4 558.2L294.5 380.5L203.2 502.3C197 510.6 186.2 513.9 176.4 510.7C166.6 507.5 160 498.3 160 488L160 88C160 78.9 165.1 70.6 173.3 66.5z">
+                </Path>
+            </Canvas>
+        </Viewbox>
 
         <Label Content="Faster"
                HorizontalAlignment="Left"
